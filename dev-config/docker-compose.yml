@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  user:
+    build:
+      context: ../user
+      dockerfile: ../dev-config/Dockerfile.user
+    volumes:
+      - ../user:/app
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: users
+    ports:
+      - "3000:3000"
+    command: npm run dev 
+    container_name: user_nextjs
+      
+  mysql:
+    image: mysql:8.0
+    build: 
+      context: ../mysql
+      dockerfile: ../dev-config/Dockerfile.mysql
+    volumes:
+      - ../mysql-data:/var/lib/mysql
+      - ../mysql/init.sql:/docker-entrypoint-initdb.d/init.sql 
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root" 
+      MYSQL_DATABASE: "users"
+    ports:
+      - 8101:3306
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-file /docker-entrypoint-initdb.d/init.sql 
+    container_name: users_db

@@ -1,0 +1,219 @@
+import { useState } from 'react'
+import Edit from '@/components/CRUD/Edit'
+import Preview from '@/components/CRUD/Read'
+import Delete from '@/components/CRUD/Delete'
+import Navbar from '@/components/Navbar'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+
+export default function Home({
+	classname = 'dropdown',
+	users,
+	departments,
+	roles,
+}: any) {
+	const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
+		null
+	)
+	const [selectedRole, setSelectedRole] = useState<string | null>(null)
+	const [searchQuery, setSearchQuery] = useState<string>('')
+
+	const [openUserMenus, setOpenUserMenus] = useState<any>({})
+	const router = useRouter()
+
+	const toggleMenu = (userId: any) => {
+		setOpenUserMenus((prevOpenMenus: any) => ({
+			...prevOpenMenus,
+			//@ts-ignore
+			[userId]: !prevOpenMenus[userId],
+		}))
+	}
+	const userExistsInList = (userId: any) => {
+		return users.some((user: any) => user.id === userId)
+	}
+
+	const handleDeleteUser = async (userId: any) => {
+		try {
+			console.log('Deleting user wit ID:', userId)
+			await axios.delete(`/api/users/${userId}`)
+			console.log('User deleted successfully')
+		} catch (error) {
+			router.reload()
+			console.error('Error deleting user:', error)
+		}
+	}
+
+	const handleDepartmentChange = (departmentId: string | null) => {
+		setSelectedDepartment(departmentId)
+	}
+
+	const handleRoleChange = (roleId: string | null) => {
+		setSelectedRole(roleId)
+	}
+
+	const filteredUsers = users.filter((user: any) => {
+		if (selectedDepartment && user.department_id !== selectedDepartment) {
+			return false
+		}
+		if (selectedRole && user.role_id !== selectedRole) {
+			return false
+		}
+		if (
+			searchQuery &&
+			!user.name.toLowerCase().includes(searchQuery.toLowerCase())
+		) {
+			return false
+		}
+		return true
+	})
+
+	return (
+		<>
+			<Navbar
+				departments={departments}
+				roles={roles}
+				selectedDepartment={selectedDepartment}
+				selectedRole={selectedRole}
+				handleDepartmentChange={handleDepartmentChange}
+				handleRoleChange={handleRoleChange}
+				searchQuery={searchQuery}
+				setSearchQuery={setSearchQuery}
+			/>
+			<div className='overflow-x-auto'>
+				<table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+					<thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+						<tr>
+							<th scope='col' className='px-4 py-4'>
+								Full name
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								Email
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								Number
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								Departament
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								Role
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								Address
+							</th>
+							<th scope='col' className='px-4 py-3'>
+								<span className='sr-only'>Actions</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{filteredUsers.map((user: any) => (
+							<tr key={user.id} className='border-b dark:border-gray-700'>
+								<th
+									scope='row'
+									className='px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark'
+								>
+									{user.name}
+								</th>
+								<td className='px-4 py-3'>{user.email}</td>
+								<td className='px-4 py-3'>{user.number}</td>
+								<td className='px-4 py-3 max-w-[12rem] truncate'>
+									{departments.length > 0 &&
+										user.department_id &&
+										departments.find(
+											(dept: any) => dept.id === user.department_id
+										)?.name}
+								</td>
+								<td className='px-4 py-3'>
+									{user.role_id &&
+										roles.find((role: any) => role.id === user.role_id)?.name}
+								</td>
+								<td className='px-4 py-3'>{user.address}</td>
+								<td className='px-4 py-3 flex items-center justify-end'>
+									<div
+										className={classname}
+										onClick={() => toggleMenu(user.id)}
+									>
+										<button
+											className='inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100'
+											type='button'
+										>
+											<svg
+												className='w-5 h-5'
+												aria-hidden='true'
+												fill='currentColor'
+												viewBox='0 0 20 20'
+												xmlns='http://www.w3.org/2000/svg'
+											>
+												<path d='M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z' />
+											</svg>
+										</button>
+									</div>
+								</td>
+								{openUserMenus[user.id] && userExistsInList(user.id) && (
+									<div
+										className={classname}
+										style={{
+											position: 'absolute',
+											right: '45px',
+											zIndex: 1000,
+											background: '#1F2937',
+											borderRadius: '10px',
+										}}
+									>
+										<ul className='py-1 text-sm w-48 flex flex-wrap'>
+											<li>
+												<Edit
+													user={user}
+													departments={departments}
+													roles={roles}
+												/>
+											</li>
+											<li>
+												<Preview userMenu={openUserMenus} user={user} />
+											</li>
+											<li>
+												<Delete
+													onDeleteUser={handleDeleteUser}
+													user={user}
+													roles={roles}
+												/>
+											</li>
+										</ul>
+									</div>
+								)}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</>
+	)
+}
+
+export async function getServerSideProps() {
+	try {
+		const { data: users } = await axios.get('http://localhost:3000/api/users')
+		const { data: departments } = await axios.get(
+			'http://localhost:3000/api/departments'
+		)
+		const { data: roles } = await axios.get('http://localhost:3000/api/roles')
+
+		return {
+			props: {
+				users,
+				departments,
+				roles,
+			},
+		}
+	} catch (error) {
+		console.error('Error fetching data:', error)
+		return {
+			props: {
+				users: [],
+				departments: [],
+				roles: [],
+			},
+		}
+	}
+}
