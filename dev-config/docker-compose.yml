@@ -6,7 +6,9 @@ services:
       context: ../user
       dockerfile: ../dev-config/Dockerfile.user
     volumes:
-      - ../user:/app
+      - ../user:/app  
+      - /app/node_modules
+      - /app/.next
     depends_on:
       - mysql
     environment:
