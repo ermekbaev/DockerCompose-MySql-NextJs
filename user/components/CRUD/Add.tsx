@@ -74,10 +74,6 @@ const Add = ({ classname = "dropdown" }) => {
   };
   
 
-  // useOutsideClick(option, () => {
-  //   setFocus(true);
-  // });
-
   const open = () => {
     try {
       //@ts-ignore
