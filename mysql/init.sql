@@ -1,5 +1,5 @@
-CREATE USER 'root'@'172.23.0.3' IDENTIFIED BY 'root';
-GRANT ALL PRIVILEGES ON users.* TO 'root'@'172.23.0.3';
+ALTER USER 'root'@'172.18.0.3' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON users.* TO 'root'@'172.18.0.3';
 FLUSH PRIVILEGES;
 
 
@@ -83,3 +83,15 @@ CREATE TABLE IF NOT EXISTS users (
   FOREIGN KEY (department_id) REFERENCES departments(id),
   FOREIGN KEY (role_id) REFERENCES roles(id)
 );
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  token VARCHAR(255),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+ALTER TABLE users DROP COLUMN token;
+
+ALTER TABLE users ADD COLUMN token VARCHAR(255);
+ALTER TABLE users ADD COLUMN password_hash VARCHAR(255) NOT NULL;

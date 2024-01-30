@@ -6,7 +6,7 @@ const pool = createPool({
   user: 'root',
   password: 'root',
   database: 'users',
-  connectionLimit: 11,
+  connectionLimit: 25,
 });
 
 export default async function handler(req: any, res: any) {
@@ -16,11 +16,11 @@ export default async function handler(req: any, res: any) {
   
         const [user] = await pool.query("SELECT * FROM users WHERE id = ?", [userId]);
   
-        if (user) {
-          res.status(200).json(user);
-        } else {
-          res.status(404).json({ message: "User not found" });
-        }
+        // if (user) {
+        //   res.status(200).json(user);
+        // } else {
+        //   res.status(404).json({ message: "User not found" });
+        // }
       } catch (error) {
         console.error("Error fetching user:", error);
         res.status(500).json({ error: "Error fetching user" });

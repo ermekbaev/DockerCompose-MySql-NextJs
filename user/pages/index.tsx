@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Edit from '@/components/CRUD/Edit'
 import Preview from '@/components/CRUD/Read'
 import Delete from '@/components/CRUD/Delete'
@@ -17,16 +17,19 @@ export default function Home({
 	)
 	const [selectedRole, setSelectedRole] = useState<string | null>(null)
 	const [searchQuery, setSearchQuery] = useState<string>('')
+	const [userData, setUserData] = useState(null)
 
 	const [openUserMenus, setOpenUserMenus] = useState<any>({})
 	const router = useRouter()
 
 	const toggleMenu = (userId: any) => {
-		setOpenUserMenus((prevOpenMenus: any) => ({
-			...prevOpenMenus,
+		setOpenUserMenus((prevOpenMenus: any) => {
+			const newOpenMenus = { ...prevOpenMenus }
 			//@ts-ignore
-			[userId]: !prevOpenMenus[userId],
-		}))
+			newOpenMenus[userId] = !newOpenMenus[userId]
+		return newOpenMenus
+	})
+
 	}
 	const userExistsInList = (userId: any) => {
 		return users.some((user: any) => user.id === userId)
@@ -67,6 +70,37 @@ export default function Home({
 		return true
 	})
 
+	useEffect(() => {
+    const checkUserAuthentication = async () => {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        try {
+          const response = await axios.get('/api/user-info', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Если запрос успешен, у вас есть информация о пользователе
+          const fetchedUserData = response.data;
+          setUserData(fetchedUserData);
+        } catch (error) {
+          // Если запрос не удался, возможно, токен устарел или недействителен
+          console.error('Error fetching user info:', error);
+          // Очистить токен и установить состояние, что пользователь не авторизован
+          localStorage.removeItem('token');
+          setUserData(null);
+        }
+      } else {
+        // Состояние, что пользователь не авторизован
+        setUserData(null);
+      }
+    };
+
+	checkUserAuthentication();
+}, []);
+
 	return (
 		<>
 			<Navbar
@@ -78,6 +112,7 @@ export default function Home({
 				handleRoleChange={handleRoleChange}
 				searchQuery={searchQuery}
 				setSearchQuery={setSearchQuery}
+				userData={userData}
 			/>
 			<div className='overflow-x-auto'>
 				<table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
@@ -111,7 +146,7 @@ export default function Home({
 							<tr key={user.id} className='border-b dark:border-gray-700'>
 								<th
 									scope='row'
-									className='px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark'
+									className='px-4 py-3 font-medium  whitespace-nowrap dark'
 								>
 									{user.name}
 								</th>

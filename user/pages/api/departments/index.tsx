@@ -6,7 +6,7 @@ const pool = createPool({
   user: 'root',
   password: 'root',
   database: 'users',
-  connectionLimit: 11,
+  connectionLimit: 25,
 });
 
 
