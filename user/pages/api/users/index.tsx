@@ -1,4 +1,6 @@
-  import { createPool } from "mysql2/promise";
+import { createPool } from "mysql2/promise";
+import jwt from "jsonwebtoken"
+import { secretKey } from "../auth/tokens_module";
 
   const pool = createPool({
     host: 'mysql',
@@ -12,6 +14,7 @@
   export default async function handler(req:any, res:any) {
     if (req.method === 'GET') {
       try {
+
         const connection = await pool.getConnection();
         const [rows, fields] = await connection.query("SELECT * FROM users");
         connection.release(); 

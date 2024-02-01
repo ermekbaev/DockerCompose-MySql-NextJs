@@ -42,6 +42,7 @@ export default async function handler(
 
 			const isPasswordValid = await bcrypt.compare(
 				password,
+				//@ts-ignore
 				user[0].password_hash
 			)
 
@@ -56,6 +57,8 @@ export default async function handler(
 				userId: user[0].id,
                 //@ts-ignore
 				username: user[0].name,
+				//@ts-ignore
+				roleId: user[0].role_id
 			})
 
 			res.status(200).json({ token })

@@ -30,7 +30,7 @@ export default async function handler(req:any, res:any) {
 		// Извлечение информации о пользователе из базы данных
 		const connection = await pool.getConnection()
 		const [userDataRows] = await connection.query(
-			'SELECT id, name, email FROM users WHERE id = ?', //@ts-ignore
+			'SELECT id, name, email, role_id FROM users WHERE id = ?', //@ts-ignore
 			[decodedToken.userId]
 		)
 		connection.release()

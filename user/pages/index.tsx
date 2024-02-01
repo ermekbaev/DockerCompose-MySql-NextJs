@@ -197,22 +197,30 @@ export default function Home({
 										}}
 									>
 										<ul className='py-1 text-sm w-48 flex flex-wrap'>
-											<li>
-												<Edit
-													user={user}
-													departments={departments}
-													roles={roles}
-												/>
+											<li> 
+												{userData && userData.role_id == 3 ? (
+													<Edit
+														user={user}
+														departments={departments}
+														roles={roles}
+													/>
+												) : (
+													<p></p>
+												)}
 											</li>
 											<li>
-												<Preview userMenu={openUserMenus} user={user} />
+												<Preview userMenu={openUserMenus} user={user} userData={userData} />
 											</li>
 											<li>
-												<Delete
-													onDeleteUser={handleDeleteUser}
-													user={user}
-													roles={roles}
-												/>
+												{userData && userData.role_id == 3 ? (
+													<Delete
+														onDeleteUser={handleDeleteUser}
+														user={user}
+														roles={roles}
+													/>
+												) : (
+													<p></p>
+												)}
 											</li>
 										</ul>
 									</div>

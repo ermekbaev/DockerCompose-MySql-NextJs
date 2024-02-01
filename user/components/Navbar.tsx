@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Add from "./CRUD/Add";
 import FilterSwitcher from "./Filter/FilterSwitcher";
-import { verifyToken } from "@/pages/api/auth/tokens_module";
 import { useRouter } from 'next/router'
 
 function Navbar({ departments, roles, selectedDepartment, selectedRole, handleDepartmentChange, handleRoleChange, searchQuery, setSearchQuery, userData }: any) {
@@ -9,38 +8,17 @@ function Navbar({ departments, roles, selectedDepartment, selectedRole, handleDe
    const [isLoggedIn, setIsLoggedIn] = useState(false)
    const router = useRouter()
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token')
-  //   if (token) {
-  //     // Проверка валидности токена
-  //     const isValidToken = verifyToken(token)
-  //     if (isValidToken) {
-  //       setIsLoggedIn(true)
-  //     } else {
-  //       // Токен не валиден, выход пользователя
-  //       localStorage.removeItem('token')
-  //       setIsLoggedIn(false)
-  //     }
-  //   } else {
-  //     setIsLoggedIn(false)
-  //   }
-  // }, [])
-
    const handleLogout = () => {
-			// Очистка токена и установка состояния неавторизованного пользователя
 			localStorage.removeItem('token')
 			setIsLoggedIn(false)
 
-			// Дополнительные действия, например, перенаправление пользователя
-			router.push('/') // Укажите нужный путь
+			router.reload()
 		}
 
   const handleLoginClick = () => {
-		// Переход на страницу регистрации
 		router.push('/auth/SingIn')
 	}
 
-  console.log(userData);
   
 
   return (
@@ -123,14 +101,19 @@ function Navbar({ departments, roles, selectedDepartment, selectedRole, handleDe
 							/>
 						</li>
 						<li>
-							<Add />
+							{userData && userData.role_id == 3?(
+								<Add />
+								):(<p>
+									У вас нет доступа на добавление
+								</p>)
+							}
 						</li>
 						<li>
 							{userData ? (
 								<div>
-                <p className='text-black'>{userData.name}</p>
-                <button onClick={handleLogout}>Выйти</button>
-                </div>
+									<p className='text-black'>{userData.name}</p>
+									<button onClick={handleLogout}>Выйти</button>
+								</div>
 							) : (
 								<p onClick={handleLoginClick}>Войти</p>
 							)}

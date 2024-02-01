@@ -5,6 +5,7 @@ export const secretKey = 'secret-key' // Замените на свой секр
 interface Payload {
 	userId: string
 	username: string
+	roleId: number
 	// другие поля по необходимости
 }
 

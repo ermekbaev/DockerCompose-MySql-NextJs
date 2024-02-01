@@ -1,4 +1,3 @@
-// api/auth/registration.js
 import { createPool } from 'mysql2/promise'
 import { hashSync } from 'bcrypt'
 import { generateToken } from './tokens_module'
@@ -12,18 +11,33 @@ const pool = createPool({
 	connectionLimit: 25,
 })
 
-export default async function handler(req:any, res:any) {
+export default async function handler(req: any, res: any) {
 	try {
 		if (req.method === 'POST') {
-			const { name, password } = req.body
+			const { name, email, password, departmentId, roleId, address, number } =
+				req.body
 
-			// Хеширование пароля перед сохранением в базе данных
 			const hashedPassword = hashSync(password, 10)
+
+			const [existingDepartment] = await pool.query(
+				'SELECT * FROM departments WHERE id = ? LIMIT 1',
+				[departmentId]
+			)
+			const [existingRole] = await pool.query(
+				'SELECT * FROM roles WHERE id = ? LIMIT 1',
+				[roleId]
+			)
+
+			//@ts-ignore
+			if (existingDepartment.length === 0 || existingRole.length === 0) {
+				res.status(400).json({ error: 'Department or role does not exist' })
+				return
+			}
 
 			const connection = await pool.getConnection()
 			const result = await connection.query(
-				'INSERT INTO users (name, password_hash) VALUES (?, ?)',
-				[name, hashedPassword]
+				'INSERT INTO users (name, email, password_hash, department_id, role_id, address, number) VALUES (?, ?, ?, ?, ?, ?, ?)',
+				[name, email, hashedPassword, departmentId, roleId, address, number]
 			)
 			//@ts-ignore
 			const userId = result[0].insertId
@@ -31,12 +45,13 @@ export default async function handler(req:any, res:any) {
 			const token = generateToken({
 				userId,
 				username: 'username',
+				roleId,
 			})
 
-			await connection.query('UPDATE users SET token = ? WHERE id = ?', [
-				token,
-				userId,
-			])
+			await connection.query(
+				'UPDATE users SET token = ?, role_id = ? WHERE id = ?',
+				[token, roleId, userId]
+			)
 			connection.release()
 
 			res.status(200).json({
@@ -49,7 +64,7 @@ export default async function handler(req:any, res:any) {
 			res.status(405).end()
 		}
 	} catch (error) {
-		console.error('Error during login:', error)
+		console.error('Error during registration:', error)
 		res.status(500).json({ error: 'Internal Server Error' })
 	}
 }

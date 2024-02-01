@@ -5,7 +5,7 @@ import Edit from "./Edit";
 import axios from "axios";
 import { useRouter } from "next/router";
 
-const Preview = ({classname="dropdown",userMenu, user}:any) => {
+const Preview = ({classname="dropdown",userMenu, user, userData}:any) => {
     const ref = useRef<any>(null);
     const option = useRef<any>(null);
     const [isOpen, setIsOpen] = useState<boolean>();
@@ -97,11 +97,11 @@ const Preview = ({classname="dropdown",userMenu, user}:any) => {
                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{user.role}</dd>
                 </dl>
                 {user && user.id && userMenu[user.id] && (
-            <div className="flex">
-                        <Edit/>
-                    <Delete onDeleteUser={handleDeleteUser} user={user} />
-            </div>
-             )}
+                  <div className="flex">
+                              <Edit/>
+                          <Delete onDeleteUser={handleDeleteUser} user={user} />
+                  </div>
+                 )}
             </div>
         </div>
     </div>
