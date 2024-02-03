@@ -40,11 +40,7 @@ const Preview = ({classname="dropdown",userMenu, user, userData}:any) => {
 
       const handleDeleteUser = async (userId: any) => {
         try {
-          console.log("Deleting user with ID:", userId);
           await axios.delete(`/api/users/${userId}`);
-          console.log("User deleted successfully");
-    
-          
         } catch (error) {
           router.reload()
           console.error("Error deleting user:", error);

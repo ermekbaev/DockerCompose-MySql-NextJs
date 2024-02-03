@@ -1,8 +1,7 @@
-// auth.ts
 import { createPool } from 'mysql2/promise'
 import bcrypt from 'bcrypt'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { generateToken, verifyToken } from './tokens_module' // Укажите правильный путь к вашему модулю
+import { generateToken, verifyToken } from './tokens_module' 
 
 const pool = createPool({
 	host: 'mysql',
@@ -21,7 +20,6 @@ export default async function handler(
 		try {
 			const { name, password } = req.body
 
-			// Проверка наличия обязательных полей
 			if (!name || !password) {
 				return res
 					.status(400)
@@ -50,8 +48,6 @@ export default async function handler(
 				return res.status(401).json({ error: 'Invalid name or password' })
 			}
 
-
-			// Генерация токена
 			const token = generateToken({
                 //@ts-ignore
 				userId: user[0].id,
@@ -69,6 +65,6 @@ export default async function handler(
 				.json({ error: 'Internal Server Error', details: error.message })
 		}
 	} else {
-		res.status(405).end() // Метод не разрешен
+		res.status(405).end() 
 	}
 }

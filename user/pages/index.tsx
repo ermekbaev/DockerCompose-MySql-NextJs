@@ -37,9 +37,7 @@ export default function Home({
 
 	const handleDeleteUser = async (userId: any) => {
 		try {
-			console.log('Deleting user wit ID:', userId)
 			await axios.delete(`/api/users/${userId}`)
-			console.log('User deleted successfully')
 		} catch (error) {
 			router.reload()
 			console.error('Error deleting user:', error)
@@ -81,19 +79,14 @@ export default function Home({
               Authorization: `Bearer ${token}`,
             },
           });
-
-          // Если запрос успешен, у вас есть информация о пользователе
           const fetchedUserData = response.data;
           setUserData(fetchedUserData);
         } catch (error) {
-          // Если запрос не удался, возможно, токен устарел или недействителен
           console.error('Error fetching user info:', error);
-          // Очистить токен и установить состояние, что пользователь не авторизован
           localStorage.removeItem('token');
           setUserData(null);
         }
       } else {
-        // Состояние, что пользователь не авторизован
         setUserData(null);
       }
     };
@@ -212,7 +205,7 @@ export default function Home({
 												<Preview userMenu={openUserMenus} user={user} userData={userData} />
 											</li>
 											<li>
-												{userData && userData.role_id == 3 ? (
+												{userData && userData. role_id == 3 ? (
 													<Delete
 														onDeleteUser={handleDeleteUser}
 														user={user}

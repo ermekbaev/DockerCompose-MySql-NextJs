@@ -52,7 +52,6 @@ const Register = () => {
 			})
 
 			const { token } = response.data
-			console.log(response.data, "data");
 			
 			localStorage.setItem('token', token)
 

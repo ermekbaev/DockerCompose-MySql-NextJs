@@ -76,7 +76,6 @@ const Edit = ({className="dropdown", user, departments, roles}:any) => {
 
       const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const { value } = e.target;
-        console.log("Selected department:", value);
         setValues((prevValues: any) => ({
            ...prevValues,
            department: value,
@@ -86,7 +85,6 @@ const Edit = ({className="dropdown", user, departments, roles}:any) => {
 
      const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       const { value } = e.target;
-      console.log("Selected role:", value);
       setValues((prevValues: any) => ({
          ...prevValues,
          role: value,
@@ -104,7 +102,6 @@ const Edit = ({className="dropdown", user, departments, roles}:any) => {
           });
       
           if (response.status === 200) {
-            console.log('Данные успешно обновлены на сервере');
             close();
           } else {
             console.error('Произошла ошибка при обновлении данных на сервере');

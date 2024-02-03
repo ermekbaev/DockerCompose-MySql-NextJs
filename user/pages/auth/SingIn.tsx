@@ -1,4 +1,3 @@
-// login.js
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import axios, { AxiosError } from 'axios'
@@ -13,11 +12,8 @@ const Login = () => {
 			const response = await axios.post('/api/auth/SingIn', data)
 			const { token } = response.data
 
-			// Сохранение токена в localStorage
 			localStorage.setItem('token', token)
 
-			// Дополнительные действия при успешном входе, например, перенаправление
-			// или обновление состояния приложения
 			router.push('/')
 		} catch (error) {
 			console.error('Error during login:', error)
@@ -25,15 +21,8 @@ const Login = () => {
 				const axiosError = error as AxiosError
 				console.error('Axios Error Details:', axiosError.response?.data)
 			}
-			// Обработка ошибок
 		}
 	}
-
-	// const handleLoginClick = () => {
-	// 	// Переход на страницу регистрации
-	// 	router.push('/auth/Registration')
-	// }
-
 
 	return (
 		<div className='flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 text-white'>

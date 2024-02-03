@@ -32,10 +32,8 @@ export default async function handler(req: any, res: any) {
         const result = await pool.query("DELETE FROM users WHERE id = ?", [userId]);
   //@ts-ignore
         if (result.affectedRows > 0) {
-          console.log("User deleted successfully");
           res.status(200).json({ message: "User deleted successfully" });
         } else {
-          console.log("User not found");
           res.status(404).json({ error: "User not found" });
         }
       } catch (error) {
@@ -52,10 +50,8 @@ export default async function handler(req: any, res: any) {
         );
     //@ts-ignore
         if (userUpdateResult.affectedRows > 0) {
-          console.log("User updated successfully");
           res.status(200).json({ message: "User updated successfully" });
         } else {
-          console.log("User not found");
           res.status(404).json({ error: "User not found" });
         }
       } catch (error) {
